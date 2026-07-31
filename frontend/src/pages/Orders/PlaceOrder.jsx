@@ -45,12 +45,12 @@ const PlaceOrder = () => {
     <>
       <ProgressSteps step1 step2 step3 />
 
-      <div className="container mx-auto mt-8">
+      <div className="container mx-auto px-6 py-8">
         {cart.cartItems.length === 0 ? (
           <Message>Your cart is empty</Message>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
+            <table className="w-full bg-[#111827] rounded-3xl overflow-hidden">
               <thead>
                 <tr>
                   <td className="px-1 py-2 text-left align-top">Image</td>
@@ -73,12 +73,17 @@ const PlaceOrder = () => {
                     </td>
 
                     <td className="p-2">
-                      <Link to={`/product/${item.product}`}>{item.name}</Link>
+                      <Link
+                        to={`/product/${item.product}`}
+                        className="font-semibold hover:text-yellow-400 transition"
+                      >
+                        {item.name}
+                      </Link>
                     </td>
                     <td className="p-2">{item.qty}</td>
-                    <td className="p-2">{item.price.toFixed(2)}</td>
+                    <td className="p-2">₹ {item.price.toFixed(2)}</td>
                     <td className="p-2">
-                      $ {(item.qty * item.price).toFixed(2)}
+                      ₹ {(item.qty * item.price).toFixed(2)}
                     </td>
                   </tr>
                 ))}
@@ -88,23 +93,23 @@ const PlaceOrder = () => {
         )}
 
         <div className="mt-8">
-          <h2 className="text-2xl font-semibold mb-5">Order Summary</h2>
-          <div className="flex justify-between flex-wrap p-8 bg-[#181818]">
+          <h2 className="text-4xl font-bold text-yellow-400 mb-8">Order Summary</h2>
+          <div className="grid lg:grid-cols-3 gap-8 bg-[#111827] border border-gray-700 rounded-3xl p-8 shadow-2xl">
             <ul className="text-lg">
               <li>
-                <span className="font-semibold mb-4">Items:</span> $
+                <span className="font-semibold mb-4">Items:</span> ₹
                 {cart.itemsPrice}
               </li>
               <li>
-                <span className="font-semibold mb-4">Shipping:</span> $
+                <span className="font-semibold mb-4">Shipping:</span> ₹
                 {cart.shippingPrice}
               </li>
               <li>
-                <span className="font-semibold mb-4">Tax:</span> $
+                <span className="font-semibold mb-4">Tax:</span> ₹
                 {cart.taxPrice}
               </li>
               <li>
-                <span className="font-semibold mb-4">Total:</span> $
+                <span className="font-semibold mb-4">Total:</span> ₹
                 {cart.totalPrice}
               </li>
             </ul>
@@ -112,7 +117,7 @@ const PlaceOrder = () => {
             {error && <Message variant="danger">{error.data.message}</Message>}
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4">Shipping</h2>
+              <h2 className="text-xl font-bold text-yellow-400 mb-4">Shipping</h2>
               <p>
                 <strong>Address:</strong> {cart.shippingAddress.address},{" "}
                 {cart.shippingAddress.city} {cart.shippingAddress.postalCode},{" "}
@@ -121,14 +126,14 @@ const PlaceOrder = () => {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4">Payment Method</h2>
+              <h2 className="text-xl font-bold text-yellow-400 mb-4">Payment Method</h2>
               <strong>Method:</strong> {cart.paymentMethod}
             </div>
           </div>
 
           <button
             type="button"
-            className="bg-pink-500 text-white py-2 px-4 rounded-full text-lg w-full mt-4"
+            className="w-full mt-8 bg-yellow-400 hover:bg-yellow-300 text-black font-bold py-4 rounded-xl transition duration-300"
             disabled={cart.cartItems === 0}
             onClick={placeOrderHandler}
           >

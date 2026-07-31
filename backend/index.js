@@ -11,6 +11,7 @@ import categoryRoutes from "./routes/categoryRoutes.js";
 import bookRoutes from "./routes/bookRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
+import razorpayRoutes from "./routes/razorpayRoutes.js";
 
 dotenv.config();
 const port = process.env.PORT || 5000;
@@ -28,6 +29,7 @@ app.use("/api/category", categoryRoutes);
 app.use("/api/products", bookRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/razorpay", razorpayRoutes);
 
 app.get("/api/config/paypal", (req, res) => {
   res.send({ clientId: process.env.PAYPAL_CLIENT_ID });

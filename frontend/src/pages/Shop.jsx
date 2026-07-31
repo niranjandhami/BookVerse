@@ -19,6 +19,7 @@ const Shop = () => {
 
   const categoriesQuery = useFetchCategoriesQuery();
   const [priceFilter, setPriceFilter] = useState("");
+  const [search, setSearch] = useState("");
 
   const filteredProductsQuery = useGetFilteredProductsQuery({
     checked,
@@ -34,21 +35,30 @@ const Shop = () => {
   useEffect(() => {
     if (!checked.length || !radio.length) {
       if (!filteredProductsQuery.isLoading) {
-        // Filter products based on both checked categories and price filter
         const filteredProducts = filteredProductsQuery.data.filter(
           (product) => {
-            // Check if the product price includes the entered price filter value
-            return (
-              product.price.toString().includes(priceFilter) ||
-              product.price === parseInt(priceFilter, 10)
-            );
+            const matchesPrice =
+              !priceFilter || product.price <= Number(priceFilter);
+
+            const matchesSearch = product.name
+              .toLowerCase()
+              .includes(search.toLowerCase());
+
+            return matchesPrice && matchesSearch;
           }
         );
 
         dispatch(setProducts(filteredProducts));
       }
     }
-  }, [checked, radio, filteredProductsQuery.data, dispatch, priceFilter]);
+  }, [
+    checked,
+    radio,
+    filteredProductsQuery.data,
+    dispatch,
+    priceFilter,
+    search,
+  ]);
 
   const handleBrandClick = (brand) => {
     const productsByBrand = filteredProductsQuery.data?.filter(
@@ -158,6 +168,8 @@ const Shop = () => {
             <input
               type="text"
               placeholder="🔍 Search books..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               className="mt-4 md:mt-0 w-full md:w-72 px-4 py-3 rounded-xl bg-[#1f2937] border border-gray-700 focus:outline-none focus:border-yellow-400"
             />
           </div>
