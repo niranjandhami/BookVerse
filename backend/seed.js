@@ -24,7 +24,7 @@ const seedData = async () => {
     // Create admin
     const admin = await User.create({
       username: "admin",
-      email: "admin@storyshelf.com",
+      email: "admin@bookverse.com",
       password: await bcrypt.hash("admin123", 10),
       isAdmin: true,
     });
