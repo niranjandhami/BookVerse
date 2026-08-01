@@ -11,7 +11,7 @@ const Shipping = () => {
   const cart = useSelector((state) => state.cart);
   const { shippingAddress } = cart;
 
-  const [paymentMethod, setPaymentMethod] = useState("PayPal");
+  const [paymentMethod, setPaymentMethod] = useState("Razorpay");
   const [address, setAddress] = useState(shippingAddress.address || "");
   const [city, setCity] = useState(shippingAddress.city || "");
   const [postalCode, setPostalCode] = useState(
@@ -115,25 +115,25 @@ const Shipping = () => {
             <div className="mb-8">
               <label className={labelClass}>Payment Method</label>
               <label
-                htmlFor="paypal"
+                htmlFor="razorpay"
                 className={`flex items-center justify-between rounded-xl border px-4 py-4 cursor-pointer transition-colors duration-200 ${
-                  paymentMethod === "PayPal"
+                  paymentMethod === "Razorpay"
                     ? "border-yellow-400 bg-yellow-400/5"
                     : "border-gray-700 bg-[#1f2937]"
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <input
-                    id="paypal"
+                    id="razorpay"
                     type="radio"
                     className="accent-yellow-400 w-4 h-4"
                     name="paymentMethod"
-                    value="PayPal"
-                    checked={paymentMethod === "PayPal"}
+                    value="Razorpay"
+                    checked={paymentMethod === "Razorpay"}
                     onChange={(e) => setPaymentMethod(e.target.value)}
                   />
                   <span className="text-white font-medium">
-                    PayPal or Credit Card
+                    Razorpay
                   </span>
                 </div>
                 <span className="text-xs text-gray-500">Secure checkout</span>

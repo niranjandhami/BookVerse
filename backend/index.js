@@ -14,6 +14,8 @@ import orderRoutes from "./routes/orderRoutes.js";
 import razorpayRoutes from "./routes/razorpayRoutes.js";
 
 dotenv.config();
+console.log("RAZORPAY_KEY_ID:", process.env.RAZORPAY_KEY_ID);
+console.log("RAZORPAY_KEY_SECRET:", process.env.RAZORPAY_KEY_SECRET ? "Loaded" : "Missing");
 const port = process.env.PORT || 5000;
 
 connectDB();

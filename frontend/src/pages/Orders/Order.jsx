@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import Messsage from "../../components/Message";
@@ -8,9 +7,13 @@ import Loader from "../../components/Loader";
 import {
   useDeliverOrderMutation,
   useGetOrderDetailsQuery,
-  useGetPaypalClientIdQuery,
   usePayOrderMutation,
 } from "../../redux/api/orderApiSlice";
+import {
+  useGetRazorpayKeyQuery,
+  useCreateRazorpayOrderMutation,
+  useVerifyPaymentMutation,
+} from "../../redux/api/razorpayApiSlice";
 
 const Order = () => {
   const { id: orderId } = useParams();
@@ -27,60 +30,75 @@ const Order = () => {
     useDeliverOrderMutation();
   const { userInfo } = useSelector((state) => state.auth);
 
-  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
+  const { data: razorpayKey } = useGetRazorpayKeyQuery();
 
-  const {
-    data: paypal,
-    isLoading: loadingPaPal,
-    error: errorPayPal,
-  } = useGetPaypalClientIdQuery();
+  const [createRazorpayOrder] = useCreateRazorpayOrderMutation();
 
-  useEffect(() => {
-    if (!errorPayPal && !loadingPaPal && paypal.clientId) {
-      const loadingPaPalScript = async () => {
-        paypalDispatch({
-          type: "resetOptions",
-          value: {
-            "client-id": paypal.clientId,
-            currency: "USD",
-          },
-        });
-        paypalDispatch({ type: "setLoadingStatus", value: "pending" });
+  const [verifyPayment] = useVerifyPaymentMutation();
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const razorpayHandler = async () => {
+    const loaded = await loadRazorpayScript();
+
+    if (!loaded) {
+      toast.error("Failed to load Razorpay.");
+      return;
+    }
+
+    try {
+      const razorpayOrder = await createRazorpayOrder({
+        amount: order.totalPrice,
+      }).unwrap();
+
+      const options = {
+        key: razorpayKey.key,
+        amount: razorpayOrder.amount,
+        currency: "INR",
+        name: "BookVerse",
+        description: "Book Purchase",
+        order_id: razorpayOrder.id,
+
+        handler: async function (response) {
+          try {
+            await verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              orderId,
+            }).unwrap();
+
+            toast.success("Payment Successful 🎉");
+            refetch();
+          } catch (err) {
+            toast.error("Payment Verification Failed");
+          }
+        },
+
+        prefill: {
+          name: order.user.username,
+          email: order.user.email,
+        },
+
+        theme: {
+          color: "#FACC15",
+        },
       };
 
-      if (order && !order.isPaid) {
-        if (!window.paypal) {
-          loadingPaPalScript();
-        }
-      }
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+    } catch (err) {
+      toast.error(err?.data?.message || "Unable to create payment.");
     }
-  }, [errorPayPal, loadingPaPal, order, paypal, paypalDispatch]);
-
-  function onApprove(data, actions) {
-    return actions.order.capture().then(async function (details) {
-      try {
-        await payOrder({ orderId, details });
-        refetch();
-        toast.success("Order is paid");
-      } catch (error) {
-        toast.error(error?.data?.message || error.message);
-      }
-    });
-  }
-
-  function createOrder(data, actions) {
-    return actions.order
-      .create({
-        purchase_units: [{ amount: { value: order.totalPrice } }],
-      })
-      .then((orderID) => {
-        return orderID;
-      });
-  }
-
-  function onError(err) {
-    toast.error(err.message);
-  }
+  };
 
   const deliverHandler = async () => {
     await deliverOrder(orderId);
@@ -192,21 +210,15 @@ const Order = () => {
         </div>
 
         {!order.isPaid && (
-          <div>
-            {loadingPay && <Loader />}{" "}
-            {isPending ? (
-              <Loader />
-            ) : (
-              <div>
-                <div>
-                  <PayPalButtons
-                    createOrder={createOrder}
-                    onApprove={onApprove}
-                    onError={onError}
-                  ></PayPalButtons>
-                </div>
-              </div>
-            )}
+          <div className="mt-6">
+            {loadingPay && <Loader />}
+
+            <button
+              onClick={razorpayHandler}
+              className="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-bold py-3 rounded-lg transition"
+            >
+              Pay Securely with Razorpay
+            </button>
           </div>
         )}
 

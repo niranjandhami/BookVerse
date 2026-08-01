@@ -19,7 +19,9 @@ export const getRazorpayKey = (req, res) => {
     key: process.env.RAZORPAY_KEY_ID,
   });
 };
-
+console.log("KEY:", process.env.RAZORPAY_KEY_ID);
+console.log("SECRET:", process.env.RAZORPAY_KEY_SECRET);
+console.log("RAZORPAY OBJECT:", razorpay);
 export const createRazorpayOrder = async (req, res) => {
   if (!razorpay) {
     return res.status(500).json({
