@@ -89,7 +89,7 @@ const Profile = () => {
                 <p className="text-gray-400 mt-1">{email}</p>
                 <div className="flex items-center gap-2 mt-2 flex-wrap">
                   <span className="inline-block text-xs font-medium text-yellow-400 bg-yellow-400/10 px-3 py-1 rounded-full">
-                    📚 StoryShelf Reader
+                    📚 BookVerse Member 
                   </span>
                   {memberSince && (
                     <span className="inline-block text-xs font-medium text-gray-400 bg-gray-700/30 px-3 py-1 rounded-full">

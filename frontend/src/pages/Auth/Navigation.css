@@ -1,36 +1,40 @@
 #navigation-container {
   width: 4%;
   transition: width 0.3s ease-in-out;
-  overflow: hidden; /* Hide overflowing content during transition */
+  overflow: hidden;
 }
 
 #navigation-container:hover {
   width: 15%;
 }
 
-/* Initially hide nav-item-name */
 .nav-item-name {
-  display: none;
-  transition: opacity 0.2s ease-in-out; /* Add opacity transition */
+  opacity: 0;
+  white-space: nowrap;
+  transition: opacity 0.15s ease-in-out;
+  transition-delay: 0s;
 }
 
 #navigation-container:hover .nav-item-name {
-  display: block;
   opacity: 1;
+  transition-delay: 0.15s; /* wait for width to expand first */
 }
 
 .search-input {
-  display: none;
   opacity: 0;
-  transition: opacity 0.2s ease-in-out; /* Add opacity transition */
+  transition: opacity 0.15s ease-in-out;
 }
 
 #navigation-container:hover .search-input {
-  display: block;
   opacity: 1;
+  transition-delay: 0.15s;
+}
+
+.search-icon {
+  opacity: 1;
+  transition: opacity 0.15s ease-in-out;
 }
 
 #navigation-container:hover .search-icon {
-  display: none;
-  transition: opacity 0.2s ease-in-out; /* Add opacity transition */
+  opacity: 0;
 }

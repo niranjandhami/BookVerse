@@ -54,7 +54,7 @@ const Register = () => {
     <section className="pl-[10rem] flex flex-wrap">
       <div className="mr-[4rem] mt-[5rem]">
         <h1 className="text-4xl font-bold text-white mb-2">
-          Join StoryShelf 📚
+         Join BookVerse 📚 
         </h1>
 
         <p className="text-gray-400 mb-8">
